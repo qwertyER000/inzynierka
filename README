@@ -1,7 +1,7 @@
 Render:
 1. renderowanie sylwetki modelu z Frames (projekcja punktów z 3d na 2d)
 2. miara podobieństwa zdjęcia z teksturą i widoku z Frames
+3. proponowana f bledu w nowym branchu. Konieczność takiej biblioteki aby była możliwość dodawania dodatkowych parametrów
 TO DO:
-a) funkcja błędu -> potrzebuję jeszcze jako argument const cv::Mat silhouetteCamera, ale ten argument nie może być brany pod uwagę do optymalizacji i z nim się wykrzaczy. Potrzebne rozwiązanie w którym tylko część argumentów funkcji będzie optymalizowana i nie wiem jak to zrobić z dostępnych klocków. Mój wykonalny pomysł jak to ominąć: kroki od load-img do get-silhouette-Camera wykonywać wewnątrz funkcji, ale to jest tak bardzo bez sensu, że aż mi przykro, że to jedyne na co dotychczas wpadłam
-b) optymalizacja
-c) ostateczne spięcie tego aby zrównoważyć dokładność i czas wykonywania dopasowania
+a) optymalizacja
+b) ostateczne spięcie tego aby zrównoważyć dokładność i czas wykonywania dopasowania
