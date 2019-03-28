@@ -1,7 +1,7 @@
 Render:
 1. renderowanie sylwetki modelu z Frames (projekcja punktów z 3d na 2d)
 2. miara podobieństwa zdjęcia z teksturą i widoku z Frames
-3. proponowana f bledu w nowym branchu. Konieczność takiej biblioteki aby była możliwość dodawania dodatkowych parametrów
+3. proponowana f bledu. Konieczność takiej biblioteki aby była możliwość dodawania dodatkowych parametrów
 TO DO:
 a) optymalizacja
 b) ostateczne spięcie tego aby zrównoważyć dokładność i czas wykonywania dopasowania
