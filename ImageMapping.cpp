@@ -136,12 +136,12 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, ogx::Math::ModelI
 
 	virtual Count GetResultCount()
 	{
-		return 1;
+		return 6;
 	}
 
 	virtual Count GetParamCount()
 	{
-		return 3;
+		return 6;
 	}
 
 	virtual void InitParams(Math::Vector& params)
@@ -152,9 +152,9 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, ogx::Math::ModelI
 		params[0] = rotation.at<float>(0, 0);
 		params[1] = rotation.at<float>(1, 0);
 		params[2] = rotation.at<float>(2, 0);
-		//params[4] = translation.at<float>(0, 0);
-		//params[5] = translation.at<float>(1, 0);
-		//params[6] = translation.at<float>(2, 0);
+		params[3] = translation.at<float>(0, 0);
+		params[4] = translation.at<float>(1, 0);
+		params[5] = translation.at<float>(2, 0);
 	}
 
 	virtual bool Iterate(const Math::Vector& params, Math::Vector& results)
@@ -171,10 +171,11 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, ogx::Math::ModelI
 		rotation.at<float>(0, 0) = params[0];
 		rotation.at<float>(1, 0) = params[1];
 		rotation.at<float>(2, 0) = params[2];
-		//tvec.at<float>(0, 0) = params[4];
-		//tvec.at<float>(1, 0) = params[5];
-		//tvec.at<float>(2, 0) = params[6];
-
+		translation.at<float>(0, 0) = params[3];
+		translation.at<float>(1, 0) = params[4];
+		translation.at<float>(2, 0) = params[5];
+		
+		//cv::Mat rvec = rotation;
 
 		renderSilhouette render3d;
 		render3d.GetSilhouette(rotation, translation, camera_matrix, CloudXYZ, framSilhouette);
@@ -185,13 +186,13 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, ogx::Math::ModelI
 		render3d.similarityImg(silhuette3D, silhuette2D, XOR);
 
 		double pixels_all = XOR.rows*XOR.cols;
-		
-		results(0) = (double)cv::countNonZero(XOR) / pixels_all;
-
-		OGX_LINE.Format(ogx::Info, L"Misalignment error", results);
+		for (int i = 0; i < 6; i++)
+		{
+			results(i) = (double)cv::countNonZero(XOR) / pixels_all;
+		}
 
 		//tvec.release();
-		//rvec.release();
+		rvec.release();
 		img3D.release();
 		silhuette3D.release();
 		XOR.release();
