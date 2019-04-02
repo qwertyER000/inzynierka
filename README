@@ -1,7 +1,8 @@
-ImageMapping:
-1. renderowanie sylwetki modelu z Frames (projekcja punktów z 3d na 2d)
-2. miara podobieństwa zdjęcia z teksturą i widoku z Frames
-3. Zaimplementowany Solver, ale kiedy results.size<params.size to nie uruchamia nawet solvera. Żeby działało jako results wyrzucam wektor w którym wszystkie pola są równe countNonZeros/all_pixels, ale solver w ogóle nie rusza tego, nic nie zmienia ten optimizer.
+Biblioteki potrzebne: ColorMsappig, CameraCV - w folderze GitHub files
+
+W ImageMapping.cpp:
+1. Zaimplementowany Solver, ale kiedy results.size<params.size to nie uruchamia nawet solvera. Żeby działało jako results wyrzucam wektor w którym wszystkie pola są równe countNonZeros/all_pixels, ale solver w ogóle nie rusza tego, nic nie zmienia ten optimizer.
 TO DO:
 a) optymalizacja
 b) ostateczne spięcie tego aby zrównoważyć dokładność i czas wykonywania dopasowania
+c) projekcja
