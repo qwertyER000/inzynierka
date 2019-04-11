@@ -91,7 +91,7 @@ private:
 		cv::GaussianBlur(silhuette3D, blured3D, cv::Size(61, 61), 0);
 		cv::GaussianBlur(input2D, blured2D, cv::Size(61, 61), 0);
 		cv::absdiff(blured2D, blured3D, diff);
-		if (scale_factor != 1)
+		if (scale_factor!=1)
 			cv::resize(diff, diff, cv::Size(width / scale_factor, height / scale_factor), 0, 0, CV_INTER_AREA);
 
 		for (int a = 0; a < diff.rows; a++)
@@ -168,9 +168,9 @@ private:
 		cv::Mat framSilhouette = cv::Mat::zeros(cv::Size(width_new_fram, height), CV_8UC1);
 
 
-		translation.at<float>(0, 0) = (translation_start.at<float>(0, 0) + scale_factor * 1000000 * (float)params[0]);
-		translation.at<float>(1, 0) = (translation_start.at<float>(1, 0) + scale_factor * 1000000 * (float)params[1]);
-		translation.at<float>(2, 0) = (translation_start.at<float>(2, 0) + scale_factor * 1000000 * (float)params[2]);
+		translation.at<float>(0, 0) = (translation_start.at<float>(0, 0) + scale_factor * 500000 * (float) params[0]);
+		translation.at<float>(1, 0) = (translation_start.at<float>(1, 0) + scale_factor * 500000 * (float) params[1]);
+		translation.at<float>(2, 0) = (translation_start.at<float>(2, 0) + scale_factor * 500000 * (float) params[2]);
 
 		camera.backTranslation(translation, shapeSize);
 
@@ -190,7 +190,7 @@ private:
 		cv::GaussianBlur(input2D, blured2D, cv::Size(61, 61), 0);
 		cv::absdiff(blured2D, blured3D, diff);
 		if (scale_factor != 1)
-			cv::resize(diff, diff, cv::Size(width / scale_factor, height / scale_factor), 0, 0, CV_INTER_AREA);
+			cv::resize(diff, diff, cv::Size(width/ scale_factor, height / scale_factor), 0, 0, CV_INTER_AREA);
 
 		for (int a = 0; a < diff.rows; a++)
 		{
@@ -225,7 +225,7 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, OptimizeRotation, Optimize
 
 	//SOLVER PARAMS
 	float f;
-
+	
 	//size_t count = 0;
 	//cv::Mat start_translation, translation = cv::Mat::zeros(cv::Size(1, 3), CV_32FC1);
 	renderSilhouette render3d;
@@ -300,7 +300,7 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, OptimizeRotation, Optimize
 	{
 
 	}
-
+	
 	virtual void Run(Context& context)
 	{
 
@@ -328,13 +328,13 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, OptimizeRotation, Optimize
 		f = cam.camera_matrix.at<float>(1, 1);
 
 
-
-
+	
+		
 		//3D MODEL TO CV
 		renderSilhouette object;
 		// perform calculation for each cloud
 			// run with number of threads available on current machine, optional
-		auto const thread_count = std::thread::hardware_concurrency();
+			auto const thread_count = std::thread::hardware_concurrency();
 
 		Clouds::ForEachCloud(*subtree, [&](Data::Clouds::ICloud & cloud, Data::Nodes::ITransTreeNode & node)
 		{
@@ -343,12 +343,12 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, OptimizeRotation, Optimize
 
 			object.pointsToCV_all(points);
 		}, thread_count);
-
+		
 
 		transVecNorm = cam.tvec.clone();
 		transVec = cam.tvec.clone();
 		rotVec = cam.rvec.clone();
-
+	
 		camera.normalizeTranslation(transVecNorm, object.shapeSize);
 		cam.rvecToEulerAngles(rotVec, rot);
 
@@ -378,7 +378,7 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, OptimizeRotation, Optimize
 
 
 		//START OPTIMIZATION
-		for (int i = 8; i >= 1; i = i / 2)
+		for (int i = 8; i >= 1; i=i/2)
 		{
 			optimTrans.scale_factor = i;
 			optimRot.scale_factor = i;
@@ -397,8 +397,24 @@ struct ImageMapping : public ogx::Plugin::EasyMethod, OptimizeRotation, Optimize
 			cam.eulerAnglesToRvec(rot, rotVec);
 		}
 
+		optimTrans.scale_factor = 1;
+		optimTrans.scale_factor = 1;
+		for (int i = 3; i > 0; i--)
+		{
+			transVecNorm = transVec.clone();
+			cam.normalizeTranslation(transVecNorm, object.shapeSize);
+			optimTrans.rvec = rotVec;
+			optimTrans.translation_start = transVecNorm;
+			optimTrans.Optimize();
+			transVec = optimTrans.translation;
 
-
+			optimRot.rotation_start = rot;
+			optimRot.tvec = transVec;
+			optimRot.Optimize();
+			rot = optimRot.rotation;
+			cam.eulerAnglesToRvec(rot, rotVec);
+		}
+		
 		//UPDATE VIEW
 
 		//cam.eulerAnglesToRvec(rot, rotVec);
